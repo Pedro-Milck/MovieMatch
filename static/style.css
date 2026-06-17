@@ -247,3 +247,16 @@ h1 {
     min-width: 30px;
   }
 }
+#lista-favoritos h3 {
+  font-family: 'Playfair Display', serif;
+  color: #c9a35a;
+  margin: 20px 0 8px;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
+#lista-favoritos p {
+  font-size: 0.85rem;
+  color: #a8987c;
+  margin: 4px 0;
+}

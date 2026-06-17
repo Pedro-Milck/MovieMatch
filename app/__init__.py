@@ -26,6 +26,7 @@ def create_app():
 
     #Criacao de tabelas no banco baseado nos models definidos
     with app.app_context():
+        db.drop_all()
         db.create_all()
 
     return app

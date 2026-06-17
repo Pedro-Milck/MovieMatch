@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, render_template
 from app import db
 from app.models import Vote
-from app.tmdb_service import search_rand_film
+from app.tmdb_service import search_rand_film, search_recommendation
 
 main = Blueprint('main', __name__)
 
@@ -14,7 +14,6 @@ def index():
 def random_film():
     film = search_rand_film()
 
-    # Se não encontrar filme, retorna erro 500
     if not film:
         return jsonify({'error': 'Filme não encontrado'}), 500
 
@@ -31,7 +30,8 @@ def save_vote():
         title=data["title"],
         synopsis=data.get("synopsis"),
         cover=data.get("cover"),
-        liked=data["liked"]
+        liked=data["liked"],
+        genre_ids=str(data.get("genre_ids", []))
     )
 
     # Salva no banco e confirma a transação
@@ -45,3 +45,18 @@ def save_vote():
 def liked_films():
     liked = Vote.query.filter_by(liked=True).all()
     return jsonify([v.to_dict() for v in liked]), 200
+
+@main.route("/api/recommendations", methods=['GET'])
+def recommendations():
+    liked=Vote.query.filter_by(liked=True).all()
+
+    if not liked:
+        return random_film()
+
+    movie_ids= [v.movie_id for v in liked]
+    film = search_recommendation(movie_ids)
+
+    if not film:
+        return jsonify({'error': 'Nenhuma recomendacao encontrada'}), 500
+
+    return jsonify(film), 200

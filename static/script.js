@@ -1,17 +1,17 @@
-// ===========================================
-// FASE 2: conectado ao back-end Flask de verdade
-// Endpoints reais (confirmados no código da Pessoa A):
-//   GET  /api/film/random    -> { film_id, title, synopsis, cover }
-//   POST /api/votes          -> espera { film_id, title, synopsis, cover, liked }
-//   GET  /api/liked-films    -> lista de { id, movie_id, title, cover, synopsis, liked }
-// ===========================================
-
 const URL_BASE = "http://localhost:5000";
 
-let filmeAtual = null; // guarda o filme que está na tela agora, pra usar no voto
-let totalVotos = 0;
+const GENEROS = {
+  28: "Ação", 12: "Aventura", 16: "Animação", 35: "Comédia",
+  80: "Crime", 99: "Documentário", 18: "Drama", 10751: "Família",
+  14: "Fantasia", 36: "História", 27: "Terror", 10402: "Música",
+  9648: "Mistério", 10749: "Romance", 878: "Ficção Científica",
+  53: "Thriller", 10752: "Guerra", 37: "Faroeste"
+};
 
-// Pega os elementos do HTML
+let filmeAtual = null;
+let totalVotos = 0;
+const LIMITE = 10;
+
 const elPoster = document.getElementById("poster");
 const elTitulo = document.getElementById("titulo");
 const elSinopse = document.getElementById("sinopse");
@@ -23,15 +23,12 @@ const telaCard = document.getElementById("tela-card");
 const telaFavoritos = document.getElementById("tela-favoritos");
 const listaFavoritos = document.getElementById("lista-favoritos");
 
-// Preenche o card na tela com os dados de um filme
-// (usa os nomes de campo do back-end: title, synopsis, cover)
 function mostrarFilme(filme) {
   elPoster.src = filme.cover || "";
   elTitulo.textContent = filme.title;
   elSinopse.textContent = filme.synopsis || "Sem sinopse disponível.";
 }
 
-// Busca um filme aleatório no back-end e mostra na tela
 function carregarProximoFilme() {
   fetch(`${URL_BASE}/api/film/random`)
     .then(res => {
@@ -49,9 +46,8 @@ function carregarProximoFilme() {
     });
 }
 
-// Envia o voto (gostou ou não) e carrega o próximo filme
 function votar(gostou) {
-  if (!filmeAtual) return;
+  if (!filmeAtual || totalVotos >= LIMITE) return;
 
   fetch(`${URL_BASE}/api/votes`, {
     method: "POST",
@@ -61,26 +57,28 @@ function votar(gostou) {
       title: filmeAtual.title,
       synopsis: filmeAtual.synopsis,
       cover: filmeAtual.cover,
-      liked: gostou
+      liked: gostou,
+      genre_ids: filmeAtual.genre_ids || []
     })
   })
     .then(res => {
       if (!res.ok) throw new Error("Erro ao salvar voto");
       return res.json();
     })
+    .then(() => {
+      totalVotos++;
+      elContador.textContent = `votos ${totalVotos} / ${LIMITE}`;
+
+      if (totalVotos >= LIMITE) {
+        btnSim.disabled = true;
+        btnNao.disabled = true;
+        btnFavoritos.classList.remove("oculto");
+      } else {
+        carregarProximoFilme();
+      }
+    })
     .catch(erro => console.error("Não foi possível salvar o voto:", erro));
-
-  totalVotos++;
-  elContador.textContent = `votos ${totalVotos} / 10`;
-
-  if (totalVotos >= 10) {
-    btnFavoritos.classList.remove("oculto");
-  }
-
-  carregarProximoFilme();
 }
-
-// Busca a lista de filmes curtidos e mostra na tela final
 function mostrarResumo() {
   fetch(`${URL_BASE}/api/liked-films`)
     .then(res => {
@@ -91,32 +89,79 @@ function mostrarResumo() {
     .catch(erro => console.error("Não foi possível carregar o resumo:", erro));
 }
 
+function calcularGeneroFavorito(curtidos) {
+  const contagem = {};
+
+  curtidos.forEach(filme => {
+    if (!filme.genre_ids) return;
+    // genre_ids vem como string do banco, ex: "[28, 12]"
+    const ids = JSON.parse(filme.genre_ids.replace(/'/g, '"'));
+    ids.forEach(id => {
+      const nome = GENEROS[id] || "Outro";
+      contagem[nome] = (contagem[nome] || 0) + 1;
+    });
+  });
+
+  if (Object.keys(contagem).length === 0) return null;
+
+  return Object.entries(contagem)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3); // top 3 gêneros
+}
+
 function renderizarResumo(curtidos) {
   listaFavoritos.innerHTML = "";
 
-  if (curtidos.length === 0) {
-    listaFavoritos.innerHTML = "<li>Você não curtiu nenhum filme ainda 😢</li>";
+  // Gêneros favoritos
+  const generosFavoritos = calcularGeneroFavorito(curtidos);
+  if (generosFavoritos) {
+    const titulo = document.createElement("h3");
+    titulo.textContent = "🎬 Gêneros favoritos:";
+    listaFavoritos.appendChild(titulo);
+
+    generosFavoritos.forEach(([genero, votos]) => {
+      const item = document.createElement("p");
+      item.textContent = `${genero}: ${votos} curtida(s)`;
+      listaFavoritos.appendChild(item);
+    });
   }
 
-  curtidos.forEach(filme => {
-    const item = document.createElement("li");
-    item.textContent = filme.title;
-    listaFavoritos.appendChild(item);
-  });
+  // Filmes curtidos
+  const tituloFilmes = document.createElement("h3");
+  listaFavoritos.appendChild(tituloFilmes);
+
+  if (curtidos.length === 0) {
+    listaFavoritos.innerHTML += "<p>Você não curtiu nenhum filme ainda</p>";
+  } else {
+    curtidos.forEach(filme => {
+      const item = document.createElement("li");
+      item.textContent = filme.title;
+      listaFavoritos.appendChild(item);
+    });
+  }
+
+  // Recomendação
+  fetch(`${URL_BASE}/api/recommendations`)
+    .then(res => res.json())
+    .then(rec => {
+      const tituloRec = document.createElement("h3");
+      tituloRec.textContent = "⭐ Recomendação pra você";
+      listaFavoritos.appendChild(tituloRec);
+
+      const item = document.createElement("p");
+      item.textContent = `${rec.title} — ${rec.synopsis}`;
+      listaFavoritos.appendChild(item);
+    })
+    .catch(() => {});
 
   telaCard.classList.add("oculto");
   telaFavoritos.classList.remove("oculto");
 }
 
-// Eventos dos botões
 btnSim.addEventListener("click", () => votar(true));
 btnNao.addEventListener("click", () => votar(false));
 btnFavoritos.addEventListener("click", mostrarResumo);
 
-// ===========================================
-// Poltronas decorativas (puramente visual, dá o clima de "sala cheia")
-// Cada fileira fica um pouco mais larga e mais opaca conforme se aproxima da frente
-// ===========================================
 function gerarPoltronas() {
   const auditorio = document.getElementById("auditorio");
   const fileiras = [
@@ -126,6 +171,7 @@ function gerarPoltronas() {
     { qtd: 16, tamanho: 13, opacidade: 0.7 },
     { qtd: 14, tamanho: 11, opacidade: 0.6 },
     { qtd: 12, tamanho: 9, opacidade: 0.5 }
+    
   ];
 
   fileiras.forEach(fileira => {
@@ -145,6 +191,5 @@ function gerarPoltronas() {
   });
 }
 
-// Ao carregar a página, já mostra o primeiro filme e desenha as poltronas
 carregarProximoFilme();
 gerarPoltronas();

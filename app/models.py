@@ -10,6 +10,7 @@ class Vote(db.Model):
     cover = db.Column(db.String(500), nullable=True)
     synopsis = db.Column(db.Text, nullable=True)
     liked = db.Column(db.Boolean, nullable=True)
+    genre_ids = db.Column(db.String(200), nullable=True)
 
     #Funcao que converte o objeto Python num dicionario
     def to_dict(self):
@@ -19,6 +20,7 @@ class Vote(db.Model):
             "title": self.title,
             "cover": self.cover,
             "synopsis": self.synopsis,
-            "liked": self.liked
+            "liked": self.liked,
+            "genre_ids": self.genre_ids
         }
 

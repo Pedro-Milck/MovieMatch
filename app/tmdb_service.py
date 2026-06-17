@@ -17,9 +17,37 @@ def search_rand_film():
     }
 
     response = requests.get(url, headers=headers, params=params)
-    print("STATUS:", response.status_code)
-    print("RESPOSTA:", response.text)
 
+
+    data = response.json()
+    films = data.get("results", [])
+
+    if not films:
+        return None
+
+    film = random.choice(films)
+
+    return {
+        "film_id": film["id"],
+        "title": film["title"],
+        "synopsis": film.get("overview", "Sem sinopse disponível."),
+        "cover": Config.TMDB_IMAGE_URL + film["poster_path"] if film.get("poster_path") else None,
+        "genre_ids": film.get("genre_ids", [])
+    }
+
+def search_recommendation(movie_ids):
+    base_id = random.choice(movie_ids)
+    url = f"{Config.TMDB_BASE_URL}/movie/{base_id}/recommendations"
+    headers = {
+        "Authorization": f"Bearer {Config.TMDB_ACCESS_TOKEN}",
+        "accept": "application/json"
+    }
+    params = {
+        "language": "pt-BR",
+        "page": 1
+    }
+
+    response = requests.get(url, headers=headers, params=params)
     data = response.json()
     films = data.get("results", [])
 
