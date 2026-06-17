@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>MovieMatch</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -39,6 +39,9 @@
     <!-- TELA 2: resumo (estatísticas + lista de curtidos) -->
     <div id="tela-favoritos" class="oculto" style="width: 100%;">
       <h2>Seu resumo</h2>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <button id="btn-voltar">← Voltar a votar</button>
+      </div>
       <ul id="lista-favoritos">
         <!-- aqui o JS vai inserir os dados do resumo -->
       </ul>
@@ -49,6 +52,6 @@
   <!-- Poltronas decorativas (geradas via JS, ficam por trás visualmente) -->
   <div class="auditorio" id="auditorio"></div>
 
-  <script src="/static/script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
