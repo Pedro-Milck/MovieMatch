@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>MovieMatch</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="conteudo">
+
+    <h1>MovieMatch</h1>
+
+    <!-- TELA 1: o card de filme -->
+    <div id="tela-card" style="width: 100%;">
+
+      <div class="marquise">
+        <span>em cartaz</span>
+      </div>
+
+      <div class="card">
+        <img id="poster" src="https://image.tmdb.org/t/p/w500/exemplo.jpg" alt="Poster do filme">
+        <h2 id="titulo">Título do Filme</h2>
+        <p id="sinopse">Aqui vai a sinopse do filme, contando rapidamente sobre o que se trata...</p>
+
+        <div class="botoes">
+          <button id="btn-nao">👎 Não curti</button>
+          <button id="btn-sim">👍 Curti</button>
+        </div>
+      </div>
+
+      <p id="contador">votos 0 / 10</p>
+
+      <div style="text-align: center;">
+        <button id="btn-favoritos" class="oculto">Ver meus favoritos</button>
+      </div>
+    </div>
+
+    <!-- TELA 2: resumo (estatísticas + lista de curtidos) -->
+    <div id="tela-favoritos" class="oculto" style="width: 100%;">
+      <h2>Seu resumo</h2>
+      <div style="text-align: center; margin-bottom: 16px;">
+        <button id="btn-voltar">← Voltar a votar</button>
+      </div>
+      <ul id="lista-favoritos">
+        <!-- aqui o JS vai inserir os dados do resumo -->
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Poltronas decorativas (geradas via JS, ficam por trás visualmente) -->
+  <div class="auditorio" id="auditorio"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
