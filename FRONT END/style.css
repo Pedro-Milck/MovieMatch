@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', Arial, sans-serif;
+  background-color: #1a0e0c;
+  color: #e8d5a8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ===== CORTINAS LATERAIS (decorativo, fixas nas bordas da tela) ===== */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 14.7%;
+  max-width: 130px;
+  min-width: 70px;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.28) 0px,
+      rgba(0, 0, 0, 0.28) 6px,
+      transparent 6px,
+      transparent 18px,
+      rgba(201, 163, 90, 0.12) 18px,
+      rgba(201, 163, 90, 0.12) 24px,
+      transparent 24px,
+      transparent 36px
+    ),
+    linear-gradient(90deg, #1a0507, #4a1318 35%, #6b1f28 65%, #3a0f15);
+}
+
+body::before {
+  left: 0;
+  border-right: 3px solid rgba(201, 163, 90, 0.5);
+}
+
+body::after {
+  right: 0;
+  border-left: 3px solid rgba(201, 163, 90, 0.5);
+  transform: scaleX(-1); /* espelha a cortina esquerda pra garantir simetria perfeita */
+}
+
+/* ===== POLTRONAS (decorativo, embaixo do contador de votos) ===== */
+.auditorio {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding-bottom: 24px;
+}
+
+.fileira {
+  display: flex;
+  gap: 3px;
+}
+
+.poltrona {
+  background: linear-gradient(180deg, #5c1a23, #1f0c0f);
+  border-top: 1px solid #c9a35a;
+  border-radius: 3px 3px 0 0;
+}
+
+/* ===== CONTEÚDO PRINCIPAL ===== */
+.conteudo {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  padding: 32px 28px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 24px;
+  color: #e8d5a8;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.5px;
+}
+
+/* ===== CARD ===== */
+.marquise {
+  width: 100%;
+  background: linear-gradient(180deg, #2a0f14, #1a0a0d);
+  border: 1px solid #c9a35a;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  padding: 10px 18px;
+  text-align: center;
+}
+
+.marquise span {
+  color: #c9a35a;
+  font-size: 0.7rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-family: 'Playfair Display', serif;
+}
+
+.card {
+  width: 100%;
+  background-color: #1c1610;
+  border: 1px solid #c9a35a;
+  border-radius: 0 0 12px 12px;
+  padding: 22px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+  text-align: center;
+}
+
+.card img {
+  width: 100%;
+  aspect-ratio: 2 / 3; /* proporção padrão de poster de filme */
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid #4a3a22;
+  background-color: #2a2218;
+}
+
+.card h2 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 500;
+  font-size: 1.2rem;
+  margin: 16px 0 8px;
+  color: #e8d5a8;
+}
+
+.card p {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #a8987c;
+  margin-bottom: 20px;
+}
+
+.botoes {
+  display: flex;
+  gap: 12px;
+}
+
+.botoes button {
+  flex: 1;
+  padding: 12px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.botoes button:hover {
+  transform: scale(1.03);
+  opacity: 0.9;
+}
+
+#btn-nao {
+  background: transparent;
+  color: #c9716a;
+  border: 1px solid #6b2a28;
+}
+
+#btn-sim {
+  background-color: #c9a35a;
+  color: #1c1610;
+  border: 1px solid #c9a35a;
+}
+
+#contador {
+  margin-top: 16px;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  color: #e8d5a8;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+}
+
+#btn-favoritos,
+#btn-voltar {
+  margin-top: 14px;
+  padding: 10px 24px;
+  border: 1px solid #c9a35a;
+  border-radius: 6px;
+  background-color: transparent;
+  color: #c9a35a;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+
+#btn-favoritos:hover,
+#btn-voltar:hover {
+  background-color: #c9a35a;
+  color: #1c1610;
+}
+
+.oculto {
+  display: none;
+}
+
+/* ===== TELA DE RESUMO ===== */
+#tela-favoritos h2 {
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+}
+
+#lista-favoritos {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+#lista-favoritos li {
+  background-color: #1c1610;
+  border: 1px solid #4a3a22;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  body::before,
+  body::after {
+    width: 10%;
+    min-width: 30px;
+  }
+}
