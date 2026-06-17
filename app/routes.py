@@ -1,9 +1,13 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from app import db
 from app.models import Vote
 from app.tmdb_service import search_rand_film
 
 main = Blueprint('main', __name__)
+
+@main.route("/")
+def index():
+    return render_template("index.html")
 
 # Endpoint que retorna um filme aleatório do TMDB
 @main.route("/api/film/random", methods=['GET'])
