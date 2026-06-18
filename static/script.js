@@ -22,6 +22,7 @@ const btnFavoritos = document.getElementById("btn-favoritos");
 const telaCard = document.getElementById("tela-card");
 const telaFavoritos = document.getElementById("tela-favoritos");
 const listaFavoritos = document.getElementById("lista-favoritos");
+const btnVoltar = document.getElementById("btn-voltar");
 
 function mostrarFilme(filme) {
   elPoster.src = filme.cover || "";
@@ -158,9 +159,24 @@ function renderizarResumo(curtidos) {
   telaFavoritos.classList.remove("oculto");
 }
 
+function voltarParaVotacao() {
+  totalVotos = 0;
+  elContador.textContent = `votos ${totalVotos} / ${LIMITE}`;
+
+  btnSim.disabled = false;
+  btnNao.disabled = false;
+  btnFavoritos.classList.add("oculto");
+
+  telaFavoritos.classList.add("oculto");
+  telaCard.classList.remove("oculto");
+
+  carregarProximoFilme();
+}
+
 btnSim.addEventListener("click", () => votar(true));
 btnNao.addEventListener("click", () => votar(false));
 btnFavoritos.addEventListener("click", mostrarResumo);
+btnVoltar.addEventListener("click", voltarParaVotacao);
 
 function gerarPoltronas() {
   const auditorio = document.getElementById("auditorio");
